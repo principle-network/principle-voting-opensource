@@ -1,0 +1,196 @@
+<div class="main-container">
+
+  <div class="header">
+    <div class="logo-wrapper">
+      <a href="https://principle.network">
+        <div class="logo">
+          <img src="/assets/img/logo.svg">
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <div *ngIf="electionsActivated && !voted">
+      <div class="container">
+        <br>
+        <br>
+        <div class="row">
+          <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+            <div class="cta-input">
+              <h1 class="intro-title">
+                Glasovnica
+              </h1>
+            </div>
+
+            <div class="cta-selected-party">
+              Glasujete tako, da s klikom izberete poslansko skupino. Izbiro potrdite z gumbom 'Oddaj glas'.
+            </div>
+            <br>
+            <br>
+          </div>
+
+          <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+            <div class="row">
+              <div *ngFor="let party of parties" class="col-12 col-md-6">
+                <div class="form-check">
+                  <label class="form-check-label w-100" for="{{ party.id }}">
+                    <div class="row">
+                      <div class="col-12 d-flex justify-content-between align-items-center h-100">
+                        <div class="party-radio-container pr-3">
+                          <b *ngIf="party.abbreviation">
+                            {{ party.abbreviation }}
+                            <br>
+                          </b>
+                          <input class="form-check-input"
+                                 type="radio" name="parties"
+                                 id="{{ party.id }}" [value]="party" [(ngModel)]="selectedParty">
+                          <span>{{ party.name }}</span>
+                        </div>
+                        <img *ngIf="party.logo" src="{{ '/assets/img/logos/' + party.logo }}"
+                             class="img-fluid party-image float-right"
+                             alt="'Logo ' + party.name">
+                      </div>
+                    </div>
+                  </label>
+                  <br>
+                  <hr>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+
+      <div *ngIf="selectedParty" class="selected-party p-3 d-flex justify-content-between align-items-center">
+        <div>
+          <div class="selected-party-text">Izbrana stranka:</div>
+          <div class="selected-party-text selected-party-text-bold">{{ selectedParty.name }}</div>
+          <div class="voting-in-progress" *ngIf="isBeingVoted">Tvoj glas se potrjuje na blockchain omrežju. Počakaj trenutek.</div>
+        </div>
+        <span (click)="vote()" *ngIf="!isBeingVoted"
+              class="btn btn-primary btn-vote align-self-end ml-3">Oddaj glas</span>
+
+        <div *ngIf="isBeingVoted" class="spinner">
+          <div class="bounce1"></div>
+          <div class="bounce2"></div>
+          <div class="bounce3"></div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!electionsActivated" class="content-container">
+      <div class="title-contianer">
+        Blockchain volitve 2018
+      </div>
+      <div class="subtitle-container">
+        Med 28.5 in 1.6 boš tukaj lahko glasoval/a za svojo najljubšo stranko.
+      </div>
+
+      <div class="notice-container">
+        Volitve so popolnoma anonimne.
+        <hr/>
+        Osebni podatki niso povezani z naslovom denarnice s katero lahko glasuješ.
+        <hr/>
+        Povezava do izvorne kode projekta bo tukaj dostopna po končanem eksperimentu.
+      </div>
+    </div>
+
+    <div *ngIf="electionsActivated && voted" class="container">
+      <div class="row d-flex justify-content-center text-center">
+        <br>
+        <br>
+        <div class="row ng-content-container">
+          <div class="col-12 text-center">
+            <br>
+            <br>
+            <div class="title-contianer">Hvala za oddan glas!</div>
+            <br>
+            <hr>
+            <br>
+            <h4>Povabi prijatelje!</h4>
+            <br>
+            <div class="fb-share-button" (click)="openFacebookShareDialog()">
+              <svg viewBox="0 0 12 12" preserveAspectRatio="xMidYMid meet">
+                <path class="svg-icon-path" d="M9.1,0.1V2H8C7.6,2,7.3,2.1,7.1,2.3C7,2.4,6.9,2.7,6.9,3v1.4H9L8.8,6.5H6.9V12H4.7V6.5H2.9V4.4h1.8V2.8 c0-0.9,0.3-1.6,0.7-2.1C6,0.2,6.6,0,7.5,0C8.2,0,8.7,0,9.1,0.1z"></path>
+              </svg>
+              <span>Deli</span>
+            </div>
+            <br>
+            <br>
+            <small>ali</small>
+            <br>
+            <br>
+            <small>Vpiši maile in jih loči z vejico. Mailov prijateljev ne hranimo.</small>
+            <br>
+            <br>
+            <div class="form-group" style="font-family: Arial">
+              <textarea class="form-control" rows="2" [(ngModel)]="emailsString"></textarea>
+              <small *ngIf="hasInvitedFriends">Vabilo je bilo poslano!</small>
+              <br>
+              <button (click)="inviteFriends()" type="button"
+                      class="btn btn-primary btn-vote">Pošlji</button>
+            </div>
+            <br>
+            <small>Spremljaj nas še naprej in bodi obveščen o rezultatih volitev.</small>
+            <br>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="social-wrapper">
+          <div class="social-icon">
+            <a href="http://t.me/PrincipleNetwork">
+              <img src="/assets/img/tg.svg">
+            </a>
+          </div>
+          <div class="social-icon">
+            <a href="https://medium.com/principle">
+              <img src="/assets/img/me.svg">
+            </a>
+          </div>
+          <div class="social-icon">
+            <a href="https://twitter.com/PrincipleNet">
+              <img src="/assets/img/tw.svg">
+            </a>
+          </div>
+          <div class="social-icon">
+            <a href="https://www.facebook.com/PrincipleNetwork/">
+              <img src="/assets/img/fb.svg">
+            </a>
+          </div>
+          <div class="social-icon">
+            <a href="mailto:contact@principle.network">
+              <img src="/assets/img/em.svg">
+            </a>
+          </div>
+        </div>
+        <div class="colophone">
+          <div class="footer-link">
+            <a href="/pogoji">Splošni pogoji uporabe</a>
+          </div>
+          <div class="footer-link">
+            <a href="/zasebnost">Pravilnik o zasebnosti</a>
+          </div>
+          <div class="footer-link">
+            <a href="https://principle.network">Principle 2018</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!electionsActivated" class="footer-container eth-wallet">
+      <div class="wallet-address">
+        Naslov denarnice:
+        <br/>
+        {{localData.address || 'Pridobivam...'}}
+      </div>
+    </div>
+  </ng-container>
+
+</div>
